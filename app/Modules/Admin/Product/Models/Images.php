@@ -13,7 +13,13 @@ class Images  extends Model
 
     protected $fillable = [
         'title',
-        'path'
+        'path',
+        'sort_order',
+        'is_main'
+    ];
+
+    protected $casts = [
+        'is_main' => 'boolean'
     ];
 
     public function product(): BelongsTo
