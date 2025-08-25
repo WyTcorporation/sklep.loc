@@ -169,7 +169,18 @@
                                     <div class="card-body">
                                         <input type="file" id="product-images" multiple>
                                         <input id="image_payload" name="image_payload" type="hidden" value="{{ json_encode($images) ?? '' }}"/>
-                                        <div id="image-list" class="mt-3"></div>
+                                        <div id="image-list" class="mt-3">
+                                            @if(!empty($images))
+                                                @foreach($images as $image)
+                                                    <div class="image-item d-flex align-items-center mb-2" data-name="{{ $image['name'] }}" data-path="{{ $image['path'] }}">
+                                                        <img src="{{ $image['path'] }}" width="80" height="80" class="mr-2">
+                                                        <input type="number" class="form-control sort-order mr-2" name="images[{{ $loop->index }}][sort_order]" value="{{ $image['sort_order'] ?? 0 }}">
+                                                        <input type="radio" name="main_image" class="mr-2" {{ $image['is_main'] ? 'checked' : '' }}>
+                                                        <button type="button" class="btn btn-danger btn-sm delete-image">Delete</button>
+                                                    </div>
+                                                @endforeach
+                                            @endif
+                                        </div>
                                     </div>
                                 </fieldset>
                             </div>
