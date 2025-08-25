@@ -372,7 +372,7 @@
                 is_main: $(this).find('.is-main').is(':checked')
             });
         });
-        document.querySelector('#images').value = JSON.stringify(images);
+        document.querySelector('#image_payload').value = JSON.stringify(images);
     }
 
     if ($('#previews').data('ui-sortable')) {
@@ -443,7 +443,7 @@ tinymce.init({
     document.addEventListener('DOMContentLoaded', () => {
         const fileInput = document.getElementById('product-images');
         const imageList = document.getElementById('image-list');
-        const imagesInput = document.getElementById('images');
+        const imagesInput = document.getElementById('image_payload');
         if (!fileInput || !imageList || !imagesInput) return;
 
         const csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
