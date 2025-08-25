@@ -41,7 +41,12 @@ class Product extends Model
 
     public function images(): hasMany
     {
-        return $this->hasMany(Images::class)->orderBy('id');
+        return $this->hasMany(Images::class)->orderBy('sort_order');
+    }
+
+    public function mainImage(): hasOne
+    {
+        return $this->hasOne(Images::class)->where('is_main', true);
     }
 
     public function comments():hasMany
