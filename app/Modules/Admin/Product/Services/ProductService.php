@@ -36,9 +36,21 @@ class ProductService
         $images = $request->input('image_payload');
         if (!empty($images) && $images !== 'null') {
             $images = is_string($images) ? json_decode($images) : $images;
-            foreach ($images as $image) {
+
+            $hasMain = false;
+            foreach ($images as $img) {
+                if (filter_var($img->is_main ?? false, FILTER_VALIDATE_BOOLEAN)) {
+                    $hasMain = true;
+                    break;
+                }
+            }
+
+            foreach ($images as $index => $image) {
                 $sortOrder = (int) ($image->sort_order ?? 0);
                 $isMain = filter_var($image->is_main ?? false, FILTER_VALIDATE_BOOLEAN);
+                if (!$hasMain && $index === 0) {
+                    $isMain = true;
+                }
 
                 $imageModel = Images::where(['title' => $image->name])->first();
                 if (empty($imageModel)) {

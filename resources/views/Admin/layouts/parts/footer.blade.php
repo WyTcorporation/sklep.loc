@@ -362,14 +362,27 @@
     }
 
     function refreshImagesField() {
+        var previous = [];
+        var currentVal = document.querySelector('#image_payload').value;
+        if (currentVal) {
+            try {
+                previous = JSON.parse(currentVal);
+            } catch (e) {
+                previous = [];
+            }
+        }
+
         var images = [];
+        var hasSelected = $('#previews .is-main:checked').length > 0;
         $('#previews .dz-preview').each(function (index) {
             $(this).find('.image-index').text(index + 1);
+            var checked = $(this).find('.is-main').is(':checked');
+            var prevIsMain = previous[index] ? previous[index].is_main : 0;
             images.push({
                 name: $(this).data('name'),
                 path: $(this).data('path'),
                 sort_order: index,
-                is_main: $(this).find('.is-main').is(':checked')
+                is_main: hasSelected ? (checked ? 1 : 0) : (prevIsMain ? 1 : 0)
             });
         });
         document.querySelector('#image_payload').value = JSON.stringify(images);
@@ -471,7 +484,7 @@ tinymce.init({
                 const name = item.dataset.name;
                 const path = item.dataset.path;
                 const sort = item.querySelector('.sort-order').value;
-                const isMain = item.querySelector('input[type="radio"]').checked;
+                const isMain = item.querySelector('input[type="radio"]').checked ? 1 : 0;
                 data.push({name, path, sort_order: Number(sort), is_main: isMain});
             });
             imagesInput.value = JSON.stringify(data);
@@ -565,7 +578,9 @@ tinymce.init({
         });
 
         const existing = imagesInput.value ? JSON.parse(imagesInput.value) : [];
-        existing.forEach(img => createImageItem(img));
+        if (imageList.children.length === 0) {
+            existing.forEach(img => createImageItem(img));
+        }
         updateSortOrderNames();
         updateImagesField();
     });
