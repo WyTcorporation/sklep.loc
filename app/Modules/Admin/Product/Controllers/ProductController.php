@@ -187,6 +187,7 @@ class ProductController extends Base
         if (isset($product->images)) {
             foreach ($product->images as $image) {
                 $images[] = [
+                    'id' => $image->id,
                     'path' => $image->path,
                     'name' => $image->title,
                     'sort_order' => $image->sort_order,

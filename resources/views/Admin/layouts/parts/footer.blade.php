@@ -462,30 +462,18 @@ tinymce.init({
         const csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         const uploadUrl = '{{ route('products.images.post') }}';
         const productId = {{ isset($item) ? $item->id : 'null' }};
+        const form = fileInput.closest('form');
 
-        function updateSortOrderNames() {
-            Array.from(imageList.children).forEach((item, index) => {
-                const sort = item.querySelector('.sort-order');
-                sort.name = `images[${index}][sort_order]`;
-            });
-        }
-
-        function rebuildSortOrders() {
+        function refreshImagesField() {
+            const data = [];
             Array.from(imageList.children).forEach((item, index) => {
                 const sort = item.querySelector('.sort-order');
                 sort.name = `images[${index}][sort_order]`;
                 sort.value = index;
-            });
-        }
-
-        function updateImagesField() {
-            const data = [];
-            Array.from(imageList.children).forEach(item => {
                 const name = item.dataset.name;
                 const path = item.dataset.path;
-                const sort = item.querySelector('.sort-order').value;
                 const isMain = item.querySelector('input[type="radio"]').checked ? 1 : 0;
-                data.push({name, path, sort_order: Number(sort), is_main: isMain});
+                data.push({name, path, sort_order: index, is_main: isMain});
             });
             imagesInput.value = JSON.stringify(data);
         }
@@ -495,6 +483,9 @@ tinymce.init({
             container.className = 'image-item d-flex align-items-center mb-2';
             container.dataset.name = image.name;
             container.dataset.path = image.path || '';
+            if (image.id) {
+                container.dataset.id = image.id;
+            }
 
             const img = document.createElement('img');
             img.src = image.preview || image.path;
@@ -516,8 +507,11 @@ tinymce.init({
 
             const btn = document.createElement('button');
             btn.type = 'button';
-            btn.className = 'btn btn-danger btn-sm delete-image';
-            btn.textContent = 'Delete';
+            btn.className = 'btn btn-danger btn-sm image-delete';
+            btn.textContent = '×';
+            if (image.id) {
+                btn.dataset.id = image.id;
+            }
 
             container.appendChild(img);
             container.appendChild(sort);
@@ -543,8 +537,7 @@ tinymce.init({
                             path: data.path || '',
                             preview: e.target.result
                         });
-                        rebuildSortOrders();
-                        updateImagesField();
+                        refreshImagesField();
                     });
             };
             reader.readAsDataURL(file);
@@ -556,24 +549,30 @@ tinymce.init({
         });
 
         imageList.addEventListener('click', e => {
-            if (e.target.classList.contains('delete-image')) {
-                e.target.closest('.image-item').remove();
-                rebuildSortOrders();
-                updateImagesField();
+            if (e.target.classList.contains('image-delete')) {
+                const item = e.target.closest('.image-item');
+                const id = e.target.dataset.id;
+                if (id && form) {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'deleted_images[]';
+                    input.value = id;
+                    form.appendChild(input);
+                }
+                item.remove();
+                refreshImagesField();
             }
         });
 
         imageList.addEventListener('change', e => {
             if (e.target.classList.contains('sort-order') || e.target.name === 'main_image') {
-                updateSortOrderNames();
-                updateImagesField();
+                refreshImagesField();
             }
         });
 
         $(imageList).sortable({
             update: function () {
-                rebuildSortOrders();
-                updateImagesField();
+                refreshImagesField();
             }
         });
 
@@ -581,7 +580,6 @@ tinymce.init({
         if (imageList.children.length === 0) {
             existing.forEach(img => createImageItem(img));
         }
-        updateSortOrderNames();
-        updateImagesField();
+        refreshImagesField();
     });
 </script>
