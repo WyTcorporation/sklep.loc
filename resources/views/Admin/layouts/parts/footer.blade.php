@@ -9,6 +9,7 @@
 
 <!-- jQuery -->
 <script src="{{asset('plugins/jquery/jquery.min.js')}}"></script>
+<script src="{{asset('plugins/jquery-ui/jquery-ui.min.js')}}"></script>
 <!-- Bootstrap 4 -->
 <script src="{{asset('plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
 <!-- Select2 -->
@@ -298,7 +299,7 @@
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
         paramName: 'images',
-        uploadMultiple: true,
+        uploadMultiple: false,
         createImageThumbnails: true,
         ignoreHiddenFiles: true,
         thumbnailWidth: 80,
@@ -306,17 +307,23 @@
         parallelUploads: 20,
         previewTemplate: previewTemplate,
         acceptedFiles: 'image/*',
-        // acceptedFiles: ".jpeg,.jpg,.png,.gif",
         hiddenInputContainer: 'form',
-        // forceFallback:false,
-        autoQueue: true, // Make sure the files aren't queued until manually added
-        previewsContainer: "#previews", // Define the container to display the previews
-        clickable: ".fileinput-button", // Define the element that should be used as click trigger to select files.
+        autoQueue: true,
+        previewsContainer: "#previews",
+        clickable: ".fileinput-button",
         success: function (file, response) {
-            var imgName = response;
-            // file.previewElement.classList.add("dz-success");
-            document.querySelector("#images").value = imgName;
-            console.log("Successfully uploaded :" + imgName);
+            var data = response;
+            if (typeof response === 'string') {
+                try {
+                    data = JSON.parse(response);
+                } catch (e) {
+                    data = {};
+                }
+            }
+            file.previewElement.dataset.path = data.path;
+            file.previewElement.dataset.name = data.name;
+            $(file.previewElement).append('<input type="radio" class="is-main" name="main_image">');
+            refreshImagesField();
         },
         error: function (file, response) {
             file.previewElement.classList.add("dz-error");
@@ -324,7 +331,6 @@
     })
 
     myDropzone.on("addedfile", function (file) {
-        // Hookup the start button
         file.previewElement.querySelector(".start").onclick = function () {
             myDropzone.enqueueFile(file)
         }
@@ -337,16 +343,12 @@
     })
 
     myDropzone.on("sending", function (file) {
-        // Show the total progress bar when upload starts
         document.querySelector("#total-progress").style.opacity = "1"
-        // And disable the start button
         file.previewElement.querySelector(".start").setAttribute("disabled", "disabled")
     })
 
-    // Hide the total progress bar when nothing's uploading anymore
-    myDropzone.on("queuecomplete", function (progress) {
+    myDropzone.on("queuecomplete", function () {
         document.querySelector("#total-progress").style.opacity = "0"
-        console.log(progress);
     })
 
     // Setup the buttons for all transfers
@@ -357,7 +359,44 @@
     }
     document.querySelector("#actions .cancel").onclick = function () {
         myDropzone.removeAllFiles(true)
+        refreshImagesField()
     }
+
+    function refreshImagesField() {
+        var images = [];
+        $('#previews .dz-preview').each(function (index) {
+            images.push({
+                name: $(this).data('name'),
+                path: $(this).data('path'),
+                sort_order: index,
+                is_main: $(this).find('.is-main').is(':checked')
+            });
+        });
+        document.querySelector('#images').value = JSON.stringify(images);
+    }
+
+    $('#previews').sortable({
+        items: '.dz-preview',
+        update: refreshImagesField
+    });
+
+    $('#previews').on('change', '.is-main', function () {
+        $('#previews .is-main').not(this).prop('checked', false);
+        refreshImagesField();
+    });
+
+    myDropzone.on('removedfile', function () {
+        refreshImagesField();
+    });
+
+    $('#previews .dz-preview').each(function () {
+        if ($(this).data('is-main') == 1) {
+            $(this).append('<input type="radio" class="is-main" name="main_image" checked>');
+        } else {
+            $(this).append('<input type="radio" class="is-main" name="main_image">');
+        }
+    });
+    refreshImagesField();
 
     // DropzoneJS Demo Code End
 

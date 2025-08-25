@@ -136,28 +136,26 @@ class ProductController extends Base
      */
     public function images(Request $request)
     {
-//        dd($request->all());
         $input = [];
-        if ($images = $request->file('images')) {
+        if ($image = $request->file('images')) {
             $destinationPath = 'images/products';
-            foreach ($images as $image) {
-                //$profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
-                $profileImage = $image->getClientOriginalName();
-                $imageModel = Images::where(['title' => $profileImage])->first();
-                if (empty($imageModel)) {
-                    $image->move($destinationPath, $profileImage);
-                    $imageModel = new Images();
-                    $imageModel->title = $profileImage;
-                    $imageModel->path = '/images/products/' . $profileImage;
-                    $imageModel->save();
-                }
-                $input[] = [
-                    'path' => '/images/products/' . $profileImage,
-                    'name' => $profileImage
-                ];
+            $profileImage = $image->getClientOriginalName();
+            $imageModel = Images::where(['title' => $profileImage])->first();
+            if (empty($imageModel)) {
+                $image->move($destinationPath, $profileImage);
+                $imageModel = new Images();
+                $imageModel->title = $profileImage;
+                $imageModel->path = '/images/products/' . $profileImage;
+                $imageModel->save();
             }
+            $input = [
+                'path' => '/images/products/' . $profileImage,
+                'name' => $profileImage,
+                'sort_order' => 0,
+                'is_main' => false
+            ];
         }
-        return json_encode($input);
+        return response()->json($input);
     }
 
     /**
@@ -177,7 +175,9 @@ class ProductController extends Base
             foreach ($product->images as $image) {
                 $images[] = [
                     'path' => $image->path,
-                    'name' => $image->title
+                    'name' => $image->title,
+                    'sort_order' => $image->sort_order,
+                    'is_main' => $image->is_main,
                 ];
             }
         }
