@@ -430,12 +430,143 @@
             language: 'uk'
         });
 
-        tinymce.init({
+tinymce.init({
             selector: 'textarea#characteristics',
             height: 300,
             plugins: 'print preview powerpaste casechange importcss tinydrive searchreplace autolink autosave save directionality advcode visualblocks visualchars fullscreen image link media mediaembed template codesample table charmap hr pagebreak nonbreaking anchor toc insertdatetime advlist lists checklist wordcount tinymcespellchecker a11ychecker imagetools textpattern noneditable help formatpainter permanentpen pageembed charmap tinycomments mentions quickbars linkchecker emoticons advtable export',
             toolbar: 'undo redo | bold italic underline strikethrough | fontselect fontsizeselect formatselect | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist checklist | forecolor backcolor casechange permanentpen formatpainter removeformat | pagebreak | charmap emoticons | fullscreen  preview save print | insertfile image media pageembed template link anchor codesample | a11ycheck ltr rtl | showcomments addcomment',
             language: 'uk'
         });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const fileInput = document.getElementById('product-images');
+        const imageList = document.getElementById('image-list');
+        const imagesInput = document.getElementById('images');
+        if (!fileInput || !imageList || !imagesInput) return;
+
+        const csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const uploadUrl = '{{ route('products.images.post') }}';
+        const productId = {{ isset($item) ? $item->id : 'null' }};
+
+        function updateSortOrderNames() {
+            Array.from(imageList.children).forEach((item, index) => {
+                const sort = item.querySelector('.sort-order');
+                sort.name = `images[${index}][sort_order]`;
+            });
+        }
+
+        function rebuildSortOrders() {
+            Array.from(imageList.children).forEach((item, index) => {
+                const sort = item.querySelector('.sort-order');
+                sort.name = `images[${index}][sort_order]`;
+                sort.value = index;
+            });
+        }
+
+        function updateImagesField() {
+            const data = [];
+            Array.from(imageList.children).forEach(item => {
+                const name = item.dataset.name;
+                const path = item.dataset.path;
+                const sort = item.querySelector('.sort-order').value;
+                const isMain = item.querySelector('input[type="radio"]').checked;
+                data.push({name, path, sort_order: Number(sort), is_main: isMain});
+            });
+            imagesInput.value = JSON.stringify(data);
+        }
+
+        function createImageItem(image) {
+            const container = document.createElement('div');
+            container.className = 'image-item d-flex align-items-center mb-2';
+            container.dataset.name = image.name;
+            container.dataset.path = image.path || '';
+
+            const img = document.createElement('img');
+            img.src = image.preview || image.path;
+            img.width = 80;
+            img.height = 80;
+            img.className = 'mr-2';
+
+            const sort = document.createElement('input');
+            sort.type = 'number';
+            sort.className = 'form-control sort-order mr-2';
+            sort.name = 'images[0][sort_order]';
+            sort.value = image.sort_order != null ? image.sort_order : 0;
+
+            const radio = document.createElement('input');
+            radio.type = 'radio';
+            radio.name = 'main_image';
+            radio.className = 'mr-2';
+            radio.checked = Boolean(image.is_main);
+
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'btn btn-danger btn-sm delete-image';
+            btn.textContent = 'Delete';
+
+            container.appendChild(img);
+            container.appendChild(sort);
+            container.appendChild(radio);
+            container.appendChild(btn);
+
+            imageList.appendChild(container);
+        }
+
+        function addFromFile(file) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                const formData = new FormData();
+                formData.append('images', file);
+                formData.append('_token', csrf);
+                if (productId) formData.append('product_id', productId);
+
+                fetch(uploadUrl, {method: 'POST', body: formData})
+                    .then(res => res.json())
+                    .then(data => {
+                        createImageItem({
+                            name: data.name || file.name,
+                            path: data.path || '',
+                            preview: e.target.result
+                        });
+                        rebuildSortOrders();
+                        updateImagesField();
+                    });
+            };
+            reader.readAsDataURL(file);
+        }
+
+        fileInput.addEventListener('change', e => {
+            Array.from(e.target.files).forEach(addFromFile);
+            e.target.value = '';
+        });
+
+        imageList.addEventListener('click', e => {
+            if (e.target.classList.contains('delete-image')) {
+                e.target.closest('.image-item').remove();
+                rebuildSortOrders();
+                updateImagesField();
+            }
+        });
+
+        imageList.addEventListener('change', e => {
+            if (e.target.classList.contains('sort-order') || e.target.name === 'main_image') {
+                updateSortOrderNames();
+                updateImagesField();
+            }
+        });
+
+        $(imageList).sortable({
+            update: function () {
+                rebuildSortOrders();
+                updateImagesField();
+            }
+        });
+
+        const existing = imagesInput.value ? JSON.parse(imagesInput.value) : [];
+        existing.forEach(img => createImageItem(img));
+        updateSortOrderNames();
+        updateImagesField();
     });
 </script>
