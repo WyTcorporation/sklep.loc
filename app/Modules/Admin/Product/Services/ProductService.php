@@ -35,18 +35,24 @@ class ProductService
         $images = $request->images;
         if (!empty($images) && $images !== 'null') {
             foreach (json_decode($images) as $image) {
+                $sortOrder = (int) ($image->sort_order ?? 0);
+                $isMain = filter_var($image->is_main ?? false, FILTER_VALIDATE_BOOLEAN);
+
                 $imageModel = Images::where(['title' => $image->name])->first();
                 if (empty($imageModel)) {
                     $imageModel = new Images();
                     $imageModel->title = $image->name;
-                    $imageModel->path = '/images/products/' . $model->id. '/'. $image->name;
-                    $imageModel->product_id = $model->id;
-                    $imageModel->save();
-                } else {
-                    $imageModel->path = '/images/products/' . $model->id. '/'. $image->name;
-                    $imageModel->product_id = $model->id;
-                    $imageModel->save();
                 }
+
+                if ($isMain) {
+                    Images::where('product_id', $model->id)->update(['is_main' => false]);
+                }
+
+                $imageModel->path = '/images/products/' . $model->id . '/' . $image->name;
+                $imageModel->product_id = $model->id;
+                $imageModel->sort_order = $sortOrder;
+                $imageModel->is_main = $isMain;
+                $imageModel->save();
             }
         }
         $comments = $request->comments;
