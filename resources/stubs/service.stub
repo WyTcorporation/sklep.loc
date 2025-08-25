@@ -1,0 +1,22 @@
+<?php
+/**
+ * Created by WyTcorp.
+ * User: WyTcorp
+ * Date: DummyDate
+ * Site: lockit.com.ua
+ * Email: wild.savedo@gmail.com
+ */
+
+namespace DummyNamespace;
+
+use DummyRequest;
+use Illuminate\Database\Eloquent\Model;
+
+class DummyClass
+{
+    public function save(DummyNameRequest $request, Model $model) {
+        $model->fill($request->only($model->getFillable()));
+        $model->save();
+        return true;
+    }
+}

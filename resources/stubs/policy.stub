@@ -1,0 +1,44 @@
+<?php
+/**
+ * Created by WyTcorp.
+ * User: WyTcorp
+ * Date: DummyDate
+ * Site: lockit.com.ua
+ * Email: wild.savedo@gmail.com
+ */
+
+namespace DummyNamespace;
+
+use DummyModel;
+use Illuminate\Auth\Access\HandlesAuthorization;
+
+class DummyName
+{
+    use HandlesAuthorization;
+
+    /**
+     * Create a new policy instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        //
+    }
+
+    public function view(DummyFuncNameModel DummyFuncModel) {
+        return DummyFuncModel->canDo(['SUPER_ADMINISTRATOR','AccessName']);
+    }
+
+    public function create(DummyFuncNameModel DummyFuncModel) {
+        return DummyFuncModel->canDo(['SUPER_ADMINISTRATOR','AccessName']);
+    }
+
+    public function edit(DummyFuncNameModel DummyFuncModel) {
+        return DummyFuncModel->canDo(['SUPER_ADMINISTRATOR','AccessName']);
+    }
+
+    public function delete(DummyFuncNameModel DummyFuncModel) {
+        return DummyFuncModel->canDo(['SUPER_ADMINISTRATOR','ROLES_ACCESS']);
+    }
+}
