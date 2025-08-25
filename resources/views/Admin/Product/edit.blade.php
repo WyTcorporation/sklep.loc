@@ -208,6 +208,10 @@
                                                          data-name="{{$image['name']}}"
                                                          data-sort-order="{{$image['sort_order']}}"
                                                          data-is-main="{{$image['is_main'] ? 1 : 0}}">
+                                                        <div class="col-auto d-flex flex-column align-items-center justify-content-center">
+                                                            <span class="badge badge-info image-index">{{$loop->iteration}}</span>
+                                                            <input type="radio" class="is-main mt-1" name="main_image">
+                                                        </div>
                                                         <div class="col-auto">
                                             <span class="preview">
                                                 <img width="80" height="80"
@@ -257,6 +261,10 @@
 
 
                                             <div id="template" class="row mt-2">
+                                                <div class="col-auto d-flex flex-column align-items-center justify-content-center">
+                                                    <span class="badge badge-info image-index"></span>
+                                                    <input type="radio" class="is-main mt-1" name="main_image">
+                                                </div>
                                                 <div class="col-auto">
                                             <span class="preview">
                                                   <img src="data:," alt="" data-dz-thumbnail/>

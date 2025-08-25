@@ -1,6 +1,14 @@
 .hidden{
     display: none;
 }
+.dz-preview .image-index {
+    min-width: 24px;
+    text-align: center;
+}
+
+.dz-preview .is-main {
+    margin-top: 5px;
+}
 .content .save {
     margin: 15px;
 }

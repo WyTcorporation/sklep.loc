@@ -322,7 +322,6 @@
             }
             file.previewElement.dataset.path = data.path;
             file.previewElement.dataset.name = data.name;
-            $(file.previewElement).append('<input type="radio" class="is-main" name="main_image">');
             refreshImagesField();
         },
         error: function (file, response) {
@@ -365,6 +364,7 @@
     function refreshImagesField() {
         var images = [];
         $('#previews .dz-preview').each(function (index) {
+            $(this).find('.image-index').text(index + 1);
             images.push({
                 name: $(this).data('name'),
                 path: $(this).data('path'),
@@ -389,12 +389,9 @@
         refreshImagesField();
     });
 
-    $('#previews .dz-preview').each(function () {
-        if ($(this).data('is-main') == 1) {
-            $(this).append('<input type="radio" class="is-main" name="main_image" checked>');
-        } else {
-            $(this).append('<input type="radio" class="is-main" name="main_image">');
-        }
+    $('#previews .dz-preview').each(function (index) {
+        $(this).find('.image-index').text(index + 1);
+        $(this).find('.is-main').prop('checked', $(this).data('is-main') == 1);
     });
     refreshImagesField();
 
