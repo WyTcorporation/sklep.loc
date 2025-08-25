@@ -33,9 +33,10 @@ class ProductService
         $new = $request->new;
         $new === 'on' ? $model->new = 1 : $model->new = 0;
         $model->save();
-        $images = $request->images;
+        $images = $request->input('image_payload');
         if (!empty($images) && $images !== 'null') {
-            foreach (json_decode($images) as $image) {
+            $images = is_string($images) ? json_decode($images) : $images;
+            foreach ($images as $image) {
                 $sortOrder = (int) ($image->sort_order ?? 0);
                 $isMain = filter_var($image->is_main ?? false, FILTER_VALIDATE_BOOLEAN);
 

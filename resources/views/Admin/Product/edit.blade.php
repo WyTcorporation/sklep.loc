@@ -168,7 +168,7 @@
                                 <fieldset class="mb-3">
                                     <div class="card-body">
                                         <input type="file" id="product-images" multiple>
-                                        <input id="images" name="images" type="hidden" value="{{ json_encode($images) ?? '' }}"/>
+                                        <input id="image_payload" name="image_payload" type="hidden" value="{{ json_encode($images) ?? '' }}"/>
                                         <div id="image-list" class="mt-3"></div>
                                     </div>
                                 </fieldset>
