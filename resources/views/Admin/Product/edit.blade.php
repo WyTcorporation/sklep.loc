@@ -203,7 +203,11 @@
                                             @if($images)
                                                 @foreach($images as $image)
                                                     <div id=""
-                                                         class="row mt-2 dz-processing dz-image-preview dz-complete">
+                                                         class="row mt-2 dz-processing dz-image-preview dz-complete"
+                                                         data-path="{{$image['path']}}"
+                                                         data-name="{{$image['name']}}"
+                                                         data-sort-order="{{$image['sort_order']}}"
+                                                         data-is-main="{{$image['is_main'] ? 1 : 0}}">
                                                         <div class="col-auto">
                                             <span class="preview">
                                                 <img width="80" height="80"
