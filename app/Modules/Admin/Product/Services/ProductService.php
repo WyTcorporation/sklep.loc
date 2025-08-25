@@ -16,6 +16,7 @@ use App\Modules\Admin\Product\Requests\ProductRequest;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\File;
 
 class ProductService
 {
@@ -46,6 +47,20 @@ class ProductService
 
                 if ($isMain) {
                     Images::where('product_id', $model->id)->update(['is_main' => false]);
+                }
+
+                $destinationDir = public_path('images/products/' . $model->id);
+                if (!File::exists($destinationDir)) {
+                    File::makeDirectory($destinationDir, 0755, true);
+                }
+
+                $sourcePath = $imageModel->path
+                    ? public_path(ltrim($imageModel->path, '/'))
+                    : public_path('images/products/tmp/' . $image->name);
+                $targetPath = $destinationDir . '/' . $image->name;
+
+                if (File::exists($sourcePath) && $sourcePath !== $targetPath) {
+                    File::move($sourcePath, $targetPath);
                 }
 
                 $imageModel->path = '/images/products/' . $model->id . '/' . $image->name;

@@ -23,6 +23,7 @@ use Illuminate\Contracts\View\View;
 use App\Modules\Admin\Dashboard\Classes\Base;
 use App\Modules\Admin\Role\Models\Role;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\File;
 
 class ProductController extends Base
 {
@@ -138,18 +139,30 @@ class ProductController extends Base
     {
         $input = [];
         if ($image = $request->file('images')) {
-            $destinationPath = 'images/products';
             $profileImage = $image->getClientOriginalName();
             $imageModel = Images::where(['title' => $profileImage])->first();
+            $productId = $request->get('product_id');
+
+            $destinationPath = $productId ? 'images/products/' . $productId : 'images/products/tmp';
+            $fullDestination = public_path($destinationPath);
+
+            if (!File::exists($fullDestination)) {
+                File::makeDirectory($fullDestination, 0755, true);
+            }
+
             if (empty($imageModel)) {
-                $image->move($destinationPath, $profileImage);
+                $image->move($fullDestination, $profileImage);
                 $imageModel = new Images();
                 $imageModel->title = $profileImage;
-                $imageModel->path = '/images/products/' . $profileImage;
+                $imageModel->path = '/' . trim($destinationPath, '/') . '/' . $profileImage;
+                if ($productId) {
+                    $imageModel->product_id = $productId;
+                }
                 $imageModel->save();
             }
+
             $input = [
-                'path' => '/images/products/' . $profileImage,
+                'path' => '/' . trim($destinationPath, '/') . '/' . $profileImage,
                 'name' => $profileImage,
                 'sort_order' => 0,
                 'is_main' => false
@@ -218,6 +231,11 @@ class ProductController extends Base
      */
     public function destroy(Product $product)
     {
+        $directory = public_path('images/products/' . $product->id);
+        if (File::exists($directory)) {
+            File::deleteDirectory($directory);
+        }
+
         $product->delete();
         return \Redirect::route('products.index')->with([
             'message' => __('Success')
