@@ -293,7 +293,7 @@
     var previewTemplate = previewNode.parentNode.innerHTML
     previewNode.parentNode.removeChild(previewNode)
 
-    var myDropzone = new Dropzone(document.body, { // Make the whole body a dropzone
+    var myDropzone = new Dropzone('#actions', {
         url: "/admin/products/images", // Set the url
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -375,6 +375,9 @@
         document.querySelector('#images').value = JSON.stringify(images);
     }
 
+    if ($('#previews').data('ui-sortable')) {
+        $('#previews').sortable('destroy');
+    }
     $('#previews').sortable({
         items: '.dz-preview',
         update: refreshImagesField
