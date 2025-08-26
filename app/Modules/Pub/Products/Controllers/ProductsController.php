@@ -17,16 +17,22 @@ class ProductsController extends Base
      */
     public function show(Product $product)
     {
+        $product->load(['images', 'mainImage', 'categoryProduct']);
+        $related = $product->categoryProduct->products()
+            ->with(['mainImage', 'images'])
+            ->get()
+            ->filter(function ($item) {
+                if ((int)$item->price !== 0) {
+                    return $item;
+                }
+            })->forPage(0, 6);
+
         $this->title = $product->title;
         $this->content = view('Pub::Products.show')->with([
             'title' => $this->title,
             'product' => $product,
             'comments' => $product->comments,
-            'products' => $product->categoryProduct->products->filter(function ($item, $key) {
-                if ((int)$item->price !== 0) {
-                    return $item;
-                }
-            })->forPage(0, 6),
+            'products' => $related,
             'phone' => config('settings.phone'),
             'delivery' => config('settings.delivery')
         ])->render();

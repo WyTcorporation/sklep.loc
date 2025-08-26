@@ -126,18 +126,14 @@
                                             <meta itemprop="priceCurrency" content="UAH">
                                             <meta itemprop="itemCondition" content="https://schema.org/UsedCondition">
                                             <meta itemprop="price" content="{{$new->price}}">
-                                            <picture class="product-item__img">
-                                                @if (!empty($new->images[0]))
-                                                    <source type="image/webp" media="(max-width:991px)"
-                                                            srcset="{{$new->images[0]->path}}">
-                                                    <source itemprop="image" type="image/webp"
-                                                            media="(min-width: 992px)"
-                                                            srcset="{{$new->images[0]->path}}">
-                                                    <img src="{{$new->images[0]->path}}" width="168" height="155"
-                                                         data-src="{{$new->images[0]->path}}"
-                                                         alt="{{$new->title}}" class="img-fluid lazy">
-                                                @endif
-                                            </picture>
+                                            @php($image = $new->mainImage->path ?? ($new->images[0]->path ?? null))
+                                            @if ($image)
+                                                <picture class="product-item__img">
+                                                    <source type="image/webp" media="(max-width:991px)" srcset="{{$image}}">
+                                                    <source itemprop="image" type="image/webp" media="(min-width: 992px)" srcset="{{$image}}">
+                                                    <img src="{{$image}}" width="168" height="155" data-src="{{$image}}" alt="{{$new->title}}" class="img-fluid lazy">
+                                                </picture>
+                                            @endif
                                             <span class="product-item__label">
                                                 <span class="label-outer"></span>
                                            </span>
@@ -254,18 +250,14 @@
                                             <meta itemprop="priceCurrency" content="UAH">
                                             <meta itemprop="itemCondition" content="https://schema.org/UsedCondition">
                                             <meta itemprop="price" content="{{$hit->price}}">
-                                            <picture class="product-item__img">
-                                                @if (!empty($hit->images[0]))
-                                                    <source type="image/webp" media="(max-width:991px)"
-                                                            srcset="{{$hit->images[0]->path}}">
-                                                    <source itemprop="image" type="image/webp"
-                                                            media="(min-width: 992px)"
-                                                            srcset="{{$hit->images[0]->path}}">
-                                                    <img src="{{$hit->images[0]->path}}" width="168" height="155"
-                                                         data-src="{{$hit->images[0]->path}}"
-                                                         alt="{{$hit->title}}" class="img-fluid lazy">
-                                                @endif
-                                            </picture>
+                                            @php($image = $hit->mainImage->path ?? ($hit->images[0]->path ?? null))
+                                            @if ($image)
+                                                <picture class="product-item__img">
+                                                    <source type="image/webp" media="(max-width:991px)" srcset="{{$image}}">
+                                                    <source itemprop="image" type="image/webp" media="(min-width: 992px)" srcset="{{$image}}">
+                                                    <img src="{{$image}}" width="168" height="155" data-src="{{$image}}" alt="{{$hit->title}}" class="img-fluid lazy">
+                                                </picture>
+                                            @endif
                                             <span class="product-item__label">
                                                 <span class="label-outer"></span>
                                            </span>

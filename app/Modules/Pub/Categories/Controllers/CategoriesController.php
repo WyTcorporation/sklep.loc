@@ -43,15 +43,15 @@ class CategoriesController extends Base
         $all = $request->all();
 //        dd($all);
         $ids = $category->products->pluck('id')->toArray();
+        $query = Product::with(['mainImage', 'images'])->whereIn('id', $ids);
         if (isset($all['priceFrom']) && isset($all['priceTo'])){
             $priceFrom = $all['priceFrom'];
             $priceTo = $all['priceTo'];
             if ($priceFrom !== '0' || $priceTo !== '1000000') {
-                $products = Product::whereIn('id', $ids)->whereBetween('price', [$all['priceFrom'], $all['priceTo']])->paginate(config('settings.pagination'));
+                $query->whereBetween('price', [$all['priceFrom'], $all['priceTo']]);
             }
-        } else {
-            $products = Product::whereIn('id',$ids)->paginate(config('settings.pagination'));
         }
+        $products = $query->paginate(config('settings.pagination'));
         $this->title = $category->meta_title;
         $this->meta_description = $category->meta_description;
         $this->meta_keys = $category->meta_keys;

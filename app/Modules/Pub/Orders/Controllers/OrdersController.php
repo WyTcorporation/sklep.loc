@@ -105,7 +105,8 @@ class OrdersController extends Base
         } else {
             $message = __('front.card.empty');
             foreach ($session['items'] as $item) {
-                $product = Product::find($item['product_id']);
+                $product = Product::with(['mainImage', 'images'])->find($item['product_id']);
+                $image = $product->mainImage->path ?? ($product->images[0]->path ?? null);
                 $products[] = [
                     'id' => $product->id,
                     'title' => $product->title,
@@ -113,7 +114,7 @@ class OrdersController extends Base
                     'price' => $product->price,
                     'product_code' => $product->product_code,
                     'count' => $item['count'],
-                    'image' => $product->images[0]->path,
+                    'image' => $image,
                     'countPrice' => round($item['count'] * $product->price)
                 ];
                 $price += round($item['count'] * $product->price);
