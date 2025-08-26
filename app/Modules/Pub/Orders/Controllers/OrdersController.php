@@ -40,6 +40,10 @@ class OrdersController extends Base
      */
     public function index(Request $request, Product $product)
     {
+        if (in_array($product->status, [0, 3])) {
+            return redirect()->back()->with(['error' => __('front.card.unavailable')]);
+        }
+
         $session = $request->session()->get('orders');
         //  $cache = Cache::get('orders');
         //  $value = Cache::put('','','');
@@ -104,8 +108,17 @@ class OrdersController extends Base
             $message = __('front.card.empty');
         } else {
             $message = __('front.card.empty');
-            foreach ($session['items'] as $item) {
+            $unavailable = false;
+            foreach ($session['items'] as $key => $item) {
                 $product = Product::with(['mainImage', 'images'])->find($item['product_id']);
+
+                if (in_array($product->status, [0, 3])) {
+                    $session['price'] -= round($item['count'] * $product->price);
+                    unset($session['items'][$key]);
+                    $unavailable = true;
+                    continue;
+                }
+
                 $image = $product->mainImage->path ?? ($product->images[0]->path ?? null);
                 $products[] = [
                     'id' => $product->id,
@@ -118,6 +131,16 @@ class OrdersController extends Base
                     'countPrice' => round($item['count'] * $product->price)
                 ];
                 $price += round($item['count'] * $product->price);
+            }
+
+            if ($unavailable) {
+                $session['price'] = $price;
+                if (empty($session['items'])) {
+                    $request->session()->forget('orders');
+                } else {
+                    $request->session()->put('orders', $session);
+                }
+                session()->flash('error', __('front.card.unavailable'));
             }
         }
         $this->content = view('Pub::Orders.card')->with([
@@ -137,6 +160,16 @@ class OrdersController extends Base
 
     public function buy(OrdersRequest $request)
     {
+        $session = $request->session()->get('orders');
+        if ($session) {
+            foreach ($session['items'] as $item) {
+                $product = Product::find($item['product_id']);
+                if (in_array($product->status, [0, 3])) {
+                    return Redirect::route('card')->with(['error' => __('front.card.unavailable')]);
+                }
+            }
+        }
+
         $payment = $request->payment;
         $order = $this->service->save($request, new Orders());
         $request->session()->forget('orders');
