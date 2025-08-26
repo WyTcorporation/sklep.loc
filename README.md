@@ -1,3 +1,5 @@
+See [STYLEGUIDE.md](STYLEGUIDE.md) for naming conventions, folder structure, and linting rules.
+
 php artisan migrate
 php artisan migrate --path=app/Modules/Admin/User/Migrations
 php artisan migrate --path=app/Modules/Admin/Role/Migrations
