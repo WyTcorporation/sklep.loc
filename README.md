@@ -72,11 +72,3 @@ docker exec -i sklep_mysql sh -c 'exec mysql -u root -p"$MYSQL_ROOT_PASSWORD" la
 
 docker exec -it nginx sklep_nginx -T | grep client_max_body_size
 docker exec -it sklep_nginx nginx -s reload
-
-## CSS linting
-
-Run Stylelint on the project's style files:
-
-```bash
-npm run lint:css
-```
