@@ -43,7 +43,8 @@ class CategoriesController extends Base
         $all = $request->all();
 //        dd($all);
         $ids = $category->products->pluck('id')->toArray();
-        $query = Product::with(['mainImage', 'images'])->whereIn('id', $ids);
+        $query = Product::with(['mainImage', 'images'])->whereIn('id', $ids)
+            ->where('status', '>', 0);
         if (isset($all['priceFrom']) && isset($all['priceTo'])){
             $priceFrom = $all['priceFrom'];
             $priceTo = $all['priceTo'];

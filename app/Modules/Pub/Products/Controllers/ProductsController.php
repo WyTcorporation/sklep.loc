@@ -17,9 +17,13 @@ class ProductsController extends Base
      */
     public function show(Product $product)
     {
+        if ((int)$product->status === 0) {
+            abort(404);
+        }
         $product->load(['images', 'mainImage', 'categoryProduct']);
         $related = $product->categoryProduct->products()
             ->with(['mainImage', 'images'])
+            ->where('status', '>', 0)
             ->get()
             ->filter(function ($item) {
                 if ((int)$item->price !== 0) {
