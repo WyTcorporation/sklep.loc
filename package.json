@@ -7,7 +7,8 @@
         "watch-poll": "npm run watch -- --watch-poll",
         "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --disable-host-check --config=node_modules/laravel-mix/setup/webpack.config.js",
         "prod": "npm run production",
-        "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
+        "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --no-progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+        "lint:css": "stylelint \"resources/**/*.{scss,css}\""
     },
     "devDependencies": {
         "@popperjs/core": "^2.10.2",
@@ -16,8 +17,11 @@
         "cross-env": "^7.0",
         "laravel-mix": "^6.0.41",
         "lodash": "^4.17.19",
+        "postcss-scss": "^4.0.9",
         "resolve-url-loader": "^5.0.0",
         "sass": "^1.32.11",
-        "sass-loader": "^11.0.1"
+        "sass-loader": "^11.0.1",
+        "stylelint": "^16.23.1",
+        "stylelint-scss": "^6.12.1"
     }
 }
