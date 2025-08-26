@@ -155,11 +155,20 @@
                                                         {{$product->price}}
                                                         <span itemprop="priceCurrency" content="UAH">₴</span></ins>
 
-                                                    <p itemprop="availability" href="https://schema.org/InStock"
-                                                       class="product-list-item__basket__available"> Продукт є в
-                                                        наявності, замовляйте сьогодні!</p>
-                                                    <a href="{{route('order',['product'=>$product->id])}}"
-                                                       class="product-list-item__basket__btn">додати до кошика</a>
+                                                    @if($product->status == 1)
+                                                        <p itemprop="availability" href="https://schema.org/InStock"
+                                                           class="product-list-item__basket__available">Є</p>
+                                                        <a href="{{route('order',['product'=>$product->id])}}"
+                                                           class="product-list-item__basket__btn">додати до кошика</a>
+                                                    @elseif($product->status == 2)
+                                                        <p itemprop="availability" href="https://schema.org/InStock"
+                                                           class="product-list-item__basket__available">Під замовлення</p>
+                                                        <a href="{{route('order',['product'=>$product->id])}}"
+                                                           class="product-list-item__basket__btn">додати до кошика</a>
+                                                    @elseif($product->status == 3)
+                                                        <p itemprop="availability" href="https://schema.org/InStock"
+                                                           class="product-list-item__basket__available">В дорозі</p>
+                                                    @endif
                                                     <a href="{{route('products.show',['product'=>$product->url])}}"
                                                        class="product-list-item__basket__btn product-list-item__basket__btn-more"
                                                        title="Подробиці продукт">Подробиці продукт</a>

@@ -187,19 +187,36 @@
                                                             xlink:href="{{asset('images/icons.svg')}}#icon-delivery-truck"></use>
                                                     </svg>Вартість доставки від: <span> {{$delivery}} ₴</span></span>
 
-                                                <p itemprop="availability" href="https://schema.org/InStock"
-                                                   class="product-list-item__basket__available available">
-                                                    Товар в наявності, замовляйте сьогодні!</p>
-                                                <a href="{{route('order',['product'=>$product->id])}}" type="button"
-                                                   class="product-list-item__basket__btn add-cart available"
-                                                   id="add-cart">Додати в кошик</a>
-                                                <button type="button"
-                                                        class="byProduct"
-                                                        data-toggle="modal"
-                                                        data-target="#byProduct"
-                                                        style="padding: 15px 25px;border-radius: 25px;background: #51AD33;color: white;font-weight: bold;">
-                                                    Купити в один клік
-                                                </button>
+                                                @if($product->status == 1)
+                                                    <p itemprop="availability" href="https://schema.org/InStock"
+                                                       class="product-list-item__basket__available available">Є</p>
+                                                    <a href="{{route('order',['product'=>$product->id])}}" type="button"
+                                                       class="product-list-item__basket__btn add-cart available"
+                                                       id="add-cart">Додати в кошик</a>
+                                                    <button type="button"
+                                                            class="byProduct"
+                                                            data-toggle="modal"
+                                                            data-target="#byProduct"
+                                                            style="padding: 15px 25px;border-radius: 25px;background: #51AD33;color: white;font-weight: bold;">
+                                                        Купити в один клік
+                                                    </button>
+                                                @elseif($product->status == 2)
+                                                    <p itemprop="availability" href="https://schema.org/InStock"
+                                                       class="product-list-item__basket__available available">Під замовлення</p>
+                                                    <a href="{{route('order',['product'=>$product->id])}}" type="button"
+                                                       class="product-list-item__basket__btn add-cart available"
+                                                       id="add-cart">Додати в кошик</a>
+                                                    <button type="button"
+                                                            class="byProduct"
+                                                            data-toggle="modal"
+                                                            data-target="#byProduct"
+                                                            style="padding: 15px 25px;border-radius: 25px;background: #51AD33;color: white;font-weight: bold;">
+                                                        Купити в один клік
+                                                    </button>
+                                                @elseif($product->status == 3)
+                                                    <p itemprop="availability" href="https://schema.org/InStock"
+                                                       class="product-list-item__basket__available">В дорозі</p>
+                                                @endif
                                                 <div class="product-list-item__basket__benefits available">
                                                     <span>
                                                         <svg class="icon-return"><use
