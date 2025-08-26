@@ -40,10 +40,10 @@ class HomeController extends Base
         $categories = Categories::where(['parent_id' => null])->get();
         $newProducts = Product::with(['mainImage', 'images'])
             ->where(['new' => 1], ['category_product_id' => 1])
-            ->whereNotNull('status')->limit(8)->get();
+            ->where('status', '>', 0)->limit(8)->get();
         $hitProducts = Product::with(['mainImage', 'images'])
             ->where(['hit' => 1], ['category_product_id' => 1])
-            ->whereNotNull('status')->limit(8)->get();
+            ->where('status', '>', 0)->limit(8)->get();
         $this->content = view('Pub::Home.index')->with([
             'title' => $page->title,
             'banners' => $banners,
