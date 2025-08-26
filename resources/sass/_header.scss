@@ -1,0 +1,28 @@
+.header-main__contact {
+    display: flex;
+    flex-direction: column;
+    margin-left: auto;
+}
+
+@media (max-width: 991px) {
+    .header-main__contact {
+        display: none;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+    .header-main__contact {
+        flex-direction: row;
+    }
+}
+
+@media (min-width: 992px) {
+    .header-main__bottom {
+        margin-top: 20px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
+
