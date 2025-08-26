@@ -176,7 +176,7 @@
                                                         <img src="{{ $image['path'] }}" width="80" height="80" class="mr-2">
                                                         <input type="number" class="form-control sort-order mr-2" name="images[{{ $loop->index }}][sort_order]" value="{{ $image['sort_order'] ?? 0 }}">
                                                         <input type="radio" name="main_image" class="mr-2" {{ $image['is_main'] ? 'checked' : '' }}>
-                                                        <button type="button" class="btn btn-danger btn-sm delete-image">Delete</button>
+                                                        <button type="button" class="btn btn-danger btn-sm image-delete" data-id="{{ $image['id'] }}">×</button>
                                                     </div>
                                                 @endforeach
                                             @endif

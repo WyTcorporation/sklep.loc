@@ -320,15 +320,14 @@
                                         <meta itemprop="itemCondition" content="https://schema.org/UsedCondition">
                                         <meta itemprop="price" content="{{$item->price}}">
 
-                                        @if ($item->images)
+                                        @php($image = $item->mainImage->path ?? ($item->images[0]->path ?? null))
+                                        @if ($image)
                                             <picture class="product-item__img">
-                                                <source type="image/webp" media="(max-width:991px)"
-                                                        srcset="{{$item->images[0]->path}}">
-                                                <source itemprop="image" type="image/webp" media="(min-width: 992px)"
-                                                        srcset="{{$item->images[0]->path}}">
-                                                <img src="{{$item->images[0]->path}}" width="168"
+                                                <source type="image/webp" media="(max-width:991px)" srcset="{{$image}}">
+                                                <source itemprop="image" type="image/webp" media="(min-width: 992px)" srcset="{{$image}}">
+                                                <img src="{{$image}}" width="168"
                                                      height="155"
-                                                     data-src="{{$item->images[0]->path}}"
+                                                     data-src="{{$image}}"
                                                      alt="{{$item->title}}"
                                                      class="img-fluid lazy loaded" data-was-processed="true">
                                             </picture>

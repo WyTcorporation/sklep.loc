@@ -33,6 +33,20 @@ class ProductService
         $new = $request->new;
         $new === 'on' ? $model->new = 1 : $model->new = 0;
         $model->save();
+        $deleted = $request->input('deleted_images', []);
+        if (!empty($deleted)) {
+            foreach ((array)$deleted as $imageId) {
+                $imageModel = Images::find($imageId);
+                if ($imageModel) {
+                    $filePath = public_path(ltrim($imageModel->path, '/'));
+                    if (File::exists($filePath)) {
+                        File::delete($filePath);
+                    }
+                    $imageModel->delete();
+                }
+            }
+        }
+
         $images = $request->input('image_payload');
         if (!empty($images) && $images !== 'null') {
             $images = is_string($images) ? json_decode($images) : $images;

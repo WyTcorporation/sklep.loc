@@ -126,17 +126,18 @@
                                                              src="{{asset('images/hot-deal.png')}}"
                                                              alt="{{$product->title}}">
                                                     @endif
+                                                    @php($image = $product->mainImage->path ?? ($product->images[0]->path ?? ''))
                                                     <picture class="product-list-item__content__img">
                                                         <source type="image/webp" media="(max-width: 500px)"
-                                                                data-srcset="{{$product->images[0]->path}}"
-                                                                srcset="{{$product->images[0]->path}}">
+                                                                data-srcset="{{$image}}"
+                                                                srcset="{{$image}}">
                                                         <source itemprop="image" type="image/webp"
                                                                 media="(min-width: 992px)"
-                                                                data-srcset="{{$product->images[0]->path}}"
-                                                                srcset="{{$product->images[0]->path}}">
+                                                                data-srcset="{{$image}}"
+                                                                srcset="{{$image}}">
                                                         <img itemprop="image"
-                                                             src="{{$product->images[0]->path}}"
-                                                             data-src="{{$product->images[0]->path}}"
+                                                             src="{{$image}}"
+                                                             data-src="{{$image}}"
                                                              class="img-fluid lazy loaded"
                                                              alt="{{$product->title}}"
                                                              data-was-processed="true">
